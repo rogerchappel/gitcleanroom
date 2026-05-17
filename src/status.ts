@@ -6,12 +6,13 @@ export async function cleanroomStatus(target: string): Promise<Record<string, un
   const receipt = await readReceipt(target);
   const status = await gitText(['-C', receipt.worktreePath, 'status', '--porcelain=v1', '--branch'], receipt.repoRoot);
   const head = await gitText(['-C', receipt.worktreePath, 'rev-parse', '--short', 'HEAD'], receipt.repoRoot);
+  const lines = status.length > 0 ? status.split('\n').filter((line) => !line.endsWith(' .gitcleanroom.json')) : [];
 
   return {
     receipt,
     head,
-    dirty: status.split('\n').some((line) => line.length > 0 && !line.startsWith('##')),
-    status: status.length > 0 ? status.split('\n') : []
+    dirty: lines.some((line) => line.length > 0 && !line.startsWith('##')),
+    status: lines
   };
 }
 

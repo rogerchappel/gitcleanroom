@@ -15,6 +15,16 @@ test('open creates a worktree with a receipt', async () => {
   await access(path.join(repo, '.cleanrooms', 'docs-pass', '.gitcleanroom.json'));
 });
 
+test('open dry-run prints a plan without creating a worktree', async () => {
+  const repo = await makeGitRepo();
+  const stdout = await runOk('node', cliArgs(['open', '--repo', repo, '--task', 'plan-only', '--dry-run']), process.cwd());
+  const payload = JSON.parse(stdout);
+
+  assert.equal(payload.mode, 'dry-run');
+  const result = await run('git', ['-C', path.join(repo, '.cleanrooms', 'plan-only'), 'status'], process.cwd());
+  assert.notEqual(result.code, 0);
+});
+
 test('open refuses dirty checkouts', async () => {
   const repo = await makeGitRepo();
   await writeFile(path.join(repo, 'dirty.txt'), 'dirty\n', 'utf8');

@@ -3,20 +3,51 @@
   "version": "0.1.0",
   "description": "Safe git worktree cleanroom helper for risky agent edits.",
   "type": "module",
-  "main": "./src/index.js",
+  "bin": {
+    "gitcleanroom": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
   "exports": {
-    ".": "./src/index.js"
+    ".": "./dist/index.js"
   },
   "files": [
-    "src",
+    "dist",
     "README.md"
   ],
   "scripts": {
-    "test": "node --test",
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "test": "npm run build && node --test dist/**/*.test.js",
+    "smoke": "npm run build && bash scripts/smoke.sh",
     "package:smoke": "npm pack --dry-run",
-    "release:check": "npm test && npm run package:smoke"
+    "release:check": "npm test && npm run check && npm run build && npm run smoke && npm run package:smoke"
   },
-  "keywords": [],
+  "keywords": [
+    "git",
+    "worktree",
+    "cli",
+    "agent",
+    "cleanroom",
+    "developer-tools"
+  ],
   "author": "Roger Chappel",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerchappel/gitcleanroom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rogerchappel/gitcleanroom/issues"
+  },
+  "homepage": "https://github.com/rogerchappel/gitcleanroom#readme"
 }

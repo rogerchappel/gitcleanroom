@@ -1,8 +1,20 @@
 import { CleanroomError } from './errors.js';
 import { gitText } from './git.js';
-import { readReceipt } from './receipt.js';
+import { Receipt, readReceipt } from './receipt.js';
 
-export async function cleanroomStatus(target: string): Promise<Record<string, unknown>> {
+export interface CleanroomStatus {
+  receipt: Receipt;
+  head: string;
+  dirty: boolean;
+  status: string[];
+}
+
+export interface ClosePlan {
+  receipt: Receipt;
+  commands: string[][];
+}
+
+export async function cleanroomStatus(target: string): Promise<CleanroomStatus> {
   const receipt = await readReceipt(target);
   const status = await gitText(['-C', receipt.worktreePath, 'status', '--porcelain=v1', '--branch'], receipt.repoRoot);
   const head = await gitText(['-C', receipt.worktreePath, 'rev-parse', '--short', 'HEAD'], receipt.repoRoot);
@@ -16,7 +28,7 @@ export async function cleanroomStatus(target: string): Promise<Record<string, un
   };
 }
 
-export async function closePlan(target: string): Promise<Record<string, unknown>> {
+export async function closePlan(target: string): Promise<ClosePlan> {
   const receipt = await readReceipt(target);
   const status = await cleanroomStatus(target);
   if (status.dirty) {

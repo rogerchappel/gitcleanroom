@@ -59,3 +59,12 @@ test('open refuses repositories without a remote', async () => {
   assert.equal(result.code, 1);
   assert.equal(JSON.parse(result.stderr).code, 'missing_remote');
 });
+
+test('open refuses cleanroom roots that are not ignored', async () => {
+  const repo = await makeGitRepo();
+
+  const result = await run('node', cliArgs(['open', '--repo', repo, '--task', 'not-ignored', '--root', 'workrooms']), process.cwd());
+
+  assert.equal(result.code, 1);
+  assert.equal(JSON.parse(result.stderr).code, 'scratch_root_not_ignored');
+});

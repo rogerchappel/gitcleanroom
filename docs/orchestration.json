@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "project": "gitcleanroom",
+  "role": "safe local git worktree cleanroom helper",
+  "primaryCommands": [
+    "gitcleanroom open --repo . --task docs-pass --base main",
+    "gitcleanroom status .cleanrooms/docs-pass",
+    "gitcleanroom close .cleanrooms/docs-pass --dry-run"
+  ],
+  "verification": [
+    "npm test",
+    "npm run check",
+    "npm run build",
+    "npm run smoke",
+    "bash scripts/validate.sh"
+  ],
+  "safety": {
+    "destructiveByDefault": false,
+    "requiresIgnoredScratchRoot": true,
+    "refusesDirtySourceCheckout": true,
+    "writesReceipt": true
+  }
+}

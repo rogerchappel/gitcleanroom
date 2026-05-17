@@ -1,58 +1,28 @@
 # Security Policy
 
+`gitcleanroom` is a local git helper. Its main security promise is boring, reviewable behavior: no hidden network calls, no automatic deletion, and no credential handling.
+
 ## Supported Versions
 
-Replace this section with the supported versions for `gitcleanroom`.
-
-Example:
-
-```md
 | Version | Supported |
 | --- | --- |
-| .x | Yes |
-| < .0 | No |
-```
-
-If the project does not publish versioned releases yet, say that clearly.
+| 0.x | Yes |
 
 ## Reporting a Vulnerability
 
-Please do not report suspected vulnerabilities in public issues, pull requests, or discussions.
+Please report vulnerabilities through GitHub Security Advisories when available, or open a minimal public issue that requests a private contact path without disclosing exploit details.
 
-Ask maintainers for the private security reporting path before sharing details.
+Useful reports include:
 
-If no private reporting path exists yet, ask maintainers through public project channels for a private reporting path. Do not include exploit details, secrets, personal data, or sensitive technical details in public messages.
+- unsafe path traversal
+- unexpected deletion or branch mutation
+- command injection through task, branch, repo, or root arguments
+- receipt contents that expose secrets unexpectedly
+- CI or release configuration that could publish unintended artifacts
 
-## What to Include
+## Local Safety Notes
 
-When a private reporting path is available, include:
-
-- A clear description of the issue.
-- Affected versions, files, packages, workflows, or configuration.
-- Steps to reproduce, proof of concept, or attack scenario when safe to share.
-- Potential impact.
-- Suggested mitigation, if known.
-
-## Response Expectations
-
-Maintainers review good-faith reports as capacity allows.
-
-Do not imply paid support, guaranteed response times, guaranteed fixes, or service-level agreements unless `gitcleanroom` explicitly provides them.
-
-## Scope
-
-In scope:
-
-- Vulnerabilities in gitcleanroom.
-- Insecure default configuration shipped by this project.
-- CI, release, or dependency guidance maintained by this project.
-
-Out of scope:
-
-- General support requests.
-- Requests for guaranteed maintenance timelines.
-- Issues in unrelated downstream projects.
-
-## Disclosure
-
-Coordinate disclosure with maintainers before publishing vulnerability details.
+- Review JSON output before scripting destructive follow-up commands.
+- `close` is dry-run by default; `--force` removes the worktree and deletes the branch only after status checks pass.
+- Do not run this tool inside repositories whose git hooks you do not trust.
+- Receipts include local filesystem paths and branch names; treat them as local operational metadata.

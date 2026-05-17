@@ -31,3 +31,11 @@ test('open refuses unsafe task names', async () => {
   assert.equal(result.code, 1);
   assert.equal(JSON.parse(result.stderr).code, 'unsafe_task_name');
 });
+
+test('open refuses cleanroom roots outside the repo', async () => {
+  const repo = await makeGitRepo();
+  const result = await run('node', cliArgs(['open', '--repo', repo, '--task', 'escape', '--root', '../outside']), process.cwd());
+
+  assert.equal(result.code, 1);
+  assert.equal(JSON.parse(result.stderr).code, 'unsafe_path');
+});

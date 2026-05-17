@@ -49,3 +49,13 @@ test('open refuses existing branches', async () => {
   assert.equal(result.code, 1);
   assert.equal(JSON.parse(result.stderr).code, 'branch_exists');
 });
+
+test('open refuses repositories without a remote', async () => {
+  const repo = await makeGitRepo();
+  await runOk('git', ['remote', 'remove', 'origin'], repo);
+
+  const result = await run('node', cliArgs(['open', '--repo', repo, '--task', 'no-remote']), process.cwd());
+
+  assert.equal(result.code, 1);
+  assert.equal(JSON.parse(result.stderr).code, 'missing_remote');
+});

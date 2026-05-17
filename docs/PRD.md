@@ -3,6 +3,7 @@
 Status: in-progress
 Decision: build now
 Factory run: 2026-05-17 PM
+Implementation status: MVP built in this repository.
 
 ## Pitch
 
@@ -31,6 +32,13 @@ Inspired by `git worktree`, local sandbox workflows, repo hygiene tools, and Rog
 - `gitcleanroom status` and `gitcleanroom close --dry-run`.
 - Fixture-backed tests using temporary git repos.
 
+### V1 Acceptance Notes
+
+- The CLI returns JSON for every command so agents can parse results without scraping text.
+- Cleanup remains dry-run by default; destructive cleanup requires `close --force`.
+- Receipts are written as `.gitcleanroom.json` inside the cleanroom worktree.
+- The default cleanroom root is `.cleanrooms/` and must be ignored by git before use.
+
 ## Out of Scope
 
 - Deleting worktrees by default.
@@ -53,4 +61,3 @@ Run `npm test`, `npm run check`, `npm run build`, `npm run smoke`, `bash scripts
 ## Agent Prompt
 
 Build `gitcleanroom` as a safe local git worktree helper for agent tasks. Prioritize dry runs, clear receipts, and refusal to perform destructive cleanup by default.
-

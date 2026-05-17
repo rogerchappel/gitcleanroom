@@ -16,8 +16,14 @@ program
 program
   .command('doctor')
   .description('Check that gitcleanroom can find git.')
-  .action(() => {
-    console.log(JSON.stringify({ ok: true, command: 'doctor' }, null, 2));
+  .action(async () => {
+    try {
+      const version = await git(['--version'], process.cwd());
+      console.log(JSON.stringify({ ok: true, command: 'doctor', git: version.stdout.trim() }, null, 2));
+    } catch (error) {
+      console.error(JSON.stringify(toErrorPayload(error), null, 2));
+      process.exitCode = 1;
+    }
   });
 
 program

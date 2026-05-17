@@ -64,7 +64,7 @@ The receipt lives at `.cleanrooms/docs-pass/.gitcleanroom.json`. It records the 
 
 ```bash
 gitcleanroom open --repo . --task docs-pass --base main
-gitcleanroom open --repo . --task spike --base origin/main --root ../worktrees --dry-run
+gitcleanroom open --repo . --task spike --base origin/main --root .cleanrooms --dry-run
 gitcleanroom status .cleanrooms/docs-pass
 gitcleanroom close .cleanrooms/docs-pass --dry-run
 gitcleanroom doctor

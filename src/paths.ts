@@ -29,6 +29,7 @@ export function assertInside(parent: string, child: string, label: string): void
 
 export function cleanroomPath(repoRoot: string, root: string, task: string): string {
   const cleanroomRoot = path.resolve(repoRoot, root);
+  assertInside(repoRoot, cleanroomRoot, 'Cleanroom root');
   const target = path.resolve(cleanroomRoot, task);
   assertInside(cleanroomRoot, target, 'Cleanroom path');
   return target;

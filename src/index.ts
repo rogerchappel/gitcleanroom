@@ -4,6 +4,7 @@ import { git } from './git.js';
 import { planOpen } from './preflight.js';
 import { writeReceipt } from './receipt.js';
 import { toErrorPayload } from './errors.js';
+import { cleanroomStatus, closePlan } from './status.js';
 
 const program = new Command();
 
@@ -39,6 +40,43 @@ program
       }
 
       console.log(JSON.stringify({ ok: true, command: 'open', mode: 'dry-run', plan }, null, 2));
+    } catch (error) {
+      console.error(JSON.stringify(toErrorPayload(error), null, 2));
+      process.exitCode = 1;
+    }
+  });
+
+program
+  .command('status')
+  .description('Read a cleanroom receipt and show worktree status.')
+  .argument('<path>', 'Cleanroom worktree path')
+  .action(async (target) => {
+    try {
+      const status = await cleanroomStatus(target);
+      console.log(JSON.stringify({ ok: true, command: 'status', ...status }, null, 2));
+    } catch (error) {
+      console.error(JSON.stringify(toErrorPayload(error), null, 2));
+      process.exitCode = 1;
+    }
+  });
+
+program
+  .command('close')
+  .description('Plan cleanroom cleanup. Destructive cleanup requires --force.')
+  .argument('<path>', 'Cleanroom worktree path')
+  .option('--dry-run', 'Print cleanup commands without running them', true)
+  .option('--force', 'Remove the worktree and delete the branch')
+  .action(async (target, options) => {
+    try {
+      const plan = await closePlan(target);
+      if (!options.force) {
+        console.log(JSON.stringify({ ok: true, command: 'close', mode: 'dry-run', ...plan }, null, 2));
+        return;
+      }
+
+      await git(['worktree', 'remove', plan.receipt.worktreePath], plan.receipt.repoRoot);
+      await git(['branch', '-d', plan.receipt.branch], plan.receipt.repoRoot);
+      console.log(JSON.stringify({ ok: true, command: 'close', mode: 'write', ...plan }, null, 2));
     } catch (error) {
       console.error(JSON.stringify(toErrorPayload(error), null, 2));
       process.exitCode = 1;

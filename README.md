@@ -1,50 +1,86 @@
 # gitcleanroom
 
-Safe git worktree cleanroom helper for risky agent edits.
+Safe disposable git workrooms for risky agent edits.
 
-## Status
-
-This repository is early-stage. Confirm the current support, release, and
-security posture before using it in production.
+`gitcleanroom` wraps `git worktree` with preflight checks, a receipt, and non-destructive cleanup plans. It is intentionally local-first: no network calls beyond whatever git already knows about your repo, no force pushes, no surprise deletion.
 
 ## Install
 
-Replace this section with the generated repository's installation steps.
-
-```sh
-pnpm install
+```bash
+npm install -g gitcleanroom
 ```
 
-## Use
+For local development:
 
-Replace this section with the smallest useful example for the generated
-repository.
-
-```sh
-pnpm dev
+```bash
+npm install
+npm run build
+node dist/index.js --help
 ```
 
-## Verify
+## Quick Start
 
-Run the local validation script before opening a pull request:
+Make sure your scratch root is ignored and committed:
 
-```sh
+```bash
+printf '.cleanrooms/\n' >> .gitignore
+git add .gitignore
+git commit -m "chore: ignore cleanrooms"
+```
+
+Open a cleanroom:
+
+```bash
+gitcleanroom open --repo . --task docs-pass --base main
+```
+
+Work in the returned `worktreePath`, then inspect it:
+
+```bash
+gitcleanroom status .cleanrooms/docs-pass
+```
+
+Plan cleanup:
+
+```bash
+gitcleanroom close .cleanrooms/docs-pass --dry-run
+```
+
+The receipt lives at `.cleanrooms/docs-pass/.gitcleanroom.json`. It records the base ref, branch, path, creation command, and cleanup plan. It is the little paper tag tied to the cleanroom door.
+
+## Refusals
+
+`gitcleanroom open` refuses to proceed when:
+
+- the source checkout is dirty
+- the repo has no remote
+- the base ref cannot be resolved
+- the target branch already exists
+- the worktree path already exists
+- the task name or path is unsafe
+- the cleanroom root is not ignored by git
+
+## Commands
+
+```bash
+gitcleanroom open --repo . --task docs-pass --base main
+gitcleanroom open --repo . --task spike --base origin/main --root ../worktrees --dry-run
+gitcleanroom status .cleanrooms/docs-pass
+gitcleanroom close .cleanrooms/docs-pass --dry-run
+gitcleanroom doctor
+```
+
+Output is JSON so agents and shell scripts can consume it without scraping prose.
+
+## Development
+
+```bash
+npm test
+npm run check
+npm run build
+npm run smoke
 bash scripts/validate.sh
 ```
-
-`scripts/validate.sh` runs the repository's standard local checks when they are defined and will also run `agent-qc ready` when `agent-qc` is installed. Missing `agent-qc` is treated as a skip, not a failure.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution expectations. Changes
-should be small, reviewable, and verified before review.
-
-## Security
-
-See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance. Replace
-the default security policy before publishing the generated repository.
-
-These links assume this README has been copied to the generated repository root.
 
 ## License
 

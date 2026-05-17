@@ -4,6 +4,14 @@ import path from 'node:path';
 import { access, writeFile } from 'node:fs/promises';
 import { cliArgs, makeGitRepo, run, runOk } from './test-helpers.test.js';
 
+test('doctor reports git availability', async () => {
+  const stdout = await runOk('node', cliArgs(['doctor']), process.cwd());
+  const payload = JSON.parse(stdout);
+
+  assert.equal(payload.ok, true);
+  assert.match(payload.git, /^git version /);
+});
+
 test('open creates a worktree with a receipt', async () => {
   const repo = await makeGitRepo();
   const stdout = await runOk('node', cliArgs(['open', '--repo', repo, '--task', 'docs-pass', '--base', 'main']), process.cwd());

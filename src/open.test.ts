@@ -39,3 +39,13 @@ test('open refuses cleanroom roots outside the repo', async () => {
   assert.equal(result.code, 1);
   assert.equal(JSON.parse(result.stderr).code, 'unsafe_path');
 });
+
+test('open refuses existing branches', async () => {
+  const repo = await makeGitRepo();
+  await runOk('git', ['branch', 'cleanroom/collision'], repo);
+
+  const result = await run('node', cliArgs(['open', '--repo', repo, '--task', 'collision']), process.cwd());
+
+  assert.equal(result.code, 1);
+  assert.equal(JSON.parse(result.stderr).code, 'branch_exists');
+});

@@ -46,7 +46,9 @@ Plan cleanup:
 gitcleanroom close .cleanrooms/docs-pass --dry-run
 ```
 
-The receipt lives at `.cleanrooms/docs-pass/.gitcleanroom.json`. It records the base ref, branch, path, creation command, and cleanup plan. It is the little paper tag tied to the cleanroom door.
+The receipt lives at `.cleanrooms/docs-pass/.gitcleanroom.json`. It records the
+base ref, branch, path, creation command, and cleanup plan so another agent or
+reviewer can understand how the disposable workroom was created.
 
 ## Refusals
 
@@ -71,6 +73,15 @@ gitcleanroom doctor
 ```
 
 Output is JSON so agents and shell scripts can consume it without scraping prose.
+
+## Limitations
+
+- `gitcleanroom` creates and removes git worktrees; it does not inspect, review,
+  or merge the changes made inside them.
+- Cleanup is intentionally non-destructive by default. Use `close --dry-run`
+  first and inspect the returned plan before deleting a workroom.
+- The tool relies on local git refs. Fetch remote branches before opening a
+  cleanroom from a base that must match current remote state.
 
 ## Development
 

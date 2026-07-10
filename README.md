@@ -83,6 +83,13 @@ Output is JSON so agents and shell scripts can consume it without scraping prose
 - The tool relies on local git refs. Fetch remote branches before opening a
   cleanroom from a base that must match current remote state.
 
+## Limitations and safety
+
+- gitcleanroom is a local worktree helper, not a sandbox. Commands run inside the cleanroom still have the permissions of the current user and shell.
+- Cleanup is intentionally planned before deletion. Review `close --dry-run` output before removing a worktree that may contain uncommitted changes.
+- The tool refuses dirty or ambiguous starting states, but it cannot guarantee that an external process will not edit the source checkout or cleanroom after creation.
+- Use remote/base refs that your team trusts; gitcleanroom does not validate branch protection, CI policy, or review requirements.
+
 ## Development
 
 ```bash
